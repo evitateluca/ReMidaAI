@@ -6,6 +6,8 @@
     <title>ReMida AI - Il tuo Consulente Finanziario</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -16,8 +18,21 @@
                 <input type="checkbox" id="themeToggle">
                 <span class="slider"></span>
             </label>
+            <div id="hamburgerMenu">
+                <button id="menuBtn">☰</button>
+                <div id="menuContent" class="hidden">
+                    <button onclick="showGlossaryModal()">Glossario</button>
+                    <button onclick="showCalculatorModal()">Calcolatore Interattivo</button>
+                    <button onclick="showSimulationModal()">Simulazione Scenari</button>
+                    <button onclick="exportToPDF()" id="exportPDFBtn" class="hidden">Esporta in PDF</button>
+                </div>
+            </div>
         </header>
         <div class="chat-section">
+            <div id="progressBarContainer" class="progress-bar-container hidden">
+                <div id="progressBar" class="progress-bar"></div>
+                <span id="progressText">Passaggio 1 di 9</span>
+            </div>
             <div id="chatbox" class="chatbox"></div>
             <div id="quickReplies" class="quick-replies"></div>
             <div class="input-container">
@@ -26,6 +41,10 @@
             </div>
         </div>
         <div class="charts-section">
+            <div class="chart-row">
+                <div class="chart-item"><canvas id="summaryChart"></canvas></div>
+                <div class="chart-text"><p id="summaryText"></p></div>
+            </div>
             <div class="chart-row">
                 <div class="chart-item"><canvas id="safetyChart"></canvas></div>
                 <div class="chart-text"><p id="safetyText"></p></div>

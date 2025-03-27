@@ -59,7 +59,7 @@ header p {
 .theme-switch {
     position: absolute;
     top: 20px;
-    right: 20px;
+    right: 80px; /* Spostato per fare spazio al menu hamburger */
 }
 
 .theme-switch input {
@@ -79,12 +79,12 @@ header p {
 
 .theme-switch .slider:before {
     position: absolute;
-    content: "☀️"; /* Icona del sole */
+    content: "☀️";
     height: 18px;
     width: 18px;
     left: 3px;
     top: 3px;
-    background: none; /* Rimuoviamo il cerchio bianco */
+    background: none;
     border-radius: 50%;
     transition: transform 0.3s ease, opacity 0.3s ease;
     font-size: 14px;
@@ -94,7 +94,7 @@ header p {
 
 .theme-switch .slider:after {
     position: absolute;
-    content: "🌙"; /* Icona della luna */
+    content: "🌙";
     height: 18px;
     width: 18px;
     right: 3px;
@@ -112,11 +112,84 @@ header p {
 
 .theme-switch input:checked + .slider:before {
     transform: translateX(26px);
-    opacity: 0; /* Nasconde il sole quando è in dark mode */
+    opacity: 0;
 }
 
 .theme-switch input:checked + .slider:after {
-    opacity: 1; /* Mostra la luna quando è in dark mode */
+    opacity: 1;
+}
+
+/* Stili per il Menu Hamburger */
+#hamburgerMenu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#menuBtn {
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #fff;
+    transition: transform 0.2s ease;
+}
+
+#menuBtn:hover {
+    transform: scale(1.1);
+}
+
+body.dark #menuBtn {
+    color: #ecf0f1;
+}
+
+#menuContent {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    display: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    min-width: 180px;
+    z-index: 1000;
+}
+
+body.dark #menuContent {
+    background: #2a3e5a;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+#menuContent button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+body.dark #menuContent button {
+    color: #ecf0f1;
+}
+
+#menuContent button:hover {
+    background: #e0e0e0;
+}
+
+body.dark #menuContent button:hover {
+    background: #34495e;
+}
+
+.hidden {
+    display: none;
 }
 
 .chat-section {
@@ -215,6 +288,7 @@ body.dark .chatbox .typing {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .quick-replies button {
@@ -293,9 +367,9 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 40px; /* Aumentato spazio */
+    margin-bottom: 40px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #e0e0e0; /* Aggiunto bordo */
+    border-bottom: 1px solid #e0e0e0;
     flex-wrap: wrap;
     gap: 20px;
 }
@@ -328,6 +402,113 @@ body.dark .chart-text p {
     color: #ecf0f1;
 }
 
+/* Stili per il modale del glossario */
+#glossaryModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#glossaryModal .modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
+}
+
+body.dark #glossaryModal .modal-content {
+    background: #2a3e5a;
+    color: #ecf0f1;
+}
+
+#glossaryModal h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #1e88e5;
+}
+
+body.dark #glossaryModal h2 {
+    color: #2196f3;
+}
+
+#glossaryModal ul {
+    list-style: none;
+    padding: 0;
+}
+
+#glossaryModal li {
+    margin: 15px 0;
+}
+
+#glossaryModal li strong {
+    color: #1e88e5;
+}
+
+body.dark #glossaryModal li strong {
+    color: #42a5f5;
+}
+
+#glossaryModal button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+}
+
+/* Stili per il modale del calcolatore (aggiunto nel JS) */
+#calculatorModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#calculatorModal .modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
+}
+
+body.dark #calculatorModal .modal-content {
+    background: #2a3e5a;
+    color: #ecf0f1;
+}
+
+#calculatorModal input {
+    margin: 10px;
+    padding: 8px;
+    width: 100px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+body.dark #calculatorModal input {
+    border-color: #34495e;
+    background: #34495e;
+    color: #ecf0f1;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -355,4 +536,182 @@ body.dark .chart-text p {
     .chart-item, .chart-text {
         max-width: 100%;
     }
+}
+
+/* Stili per il modale della simulazione scenari */
+#simulationModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#simulationModal .modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
+}
+
+body.dark #simulationModal .modal-content {
+    background: #2a3e5a;
+    color: #ecf0f1;
+}
+
+#simulationModal h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #1e88e5;
+}
+
+body.dark #simulationModal h2 {
+    color: #2196f3;
+}
+
+#simulationModal select, #simulationModal input {
+    margin: 10px 0;
+    padding: 8px;
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+body.dark #simulationModal select, body.dark #simulationModal input {
+    border-color: #34495e;
+    background: #34495e;
+    color: #ecf0f1;
+}
+
+#simulationModal button {
+    margin: 10px 0;
+    width: 100%;
+    padding: 10px;
+}
+
+#simulationModal canvas {
+    margin-top: 20px;
+    max-width: 100%;
+}
+
+#simulationModal select[multiple] {
+    height: 120px; /* Altezza per mostrare più opzioni */
+}
+
+#simulationModal .scenario-inputs {
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background: #f9fbfc;
+}
+
+body.dark #simulationModal .scenario-inputs {
+    border-color: #34495e;
+    background: #34495e;
+}
+
+/* Barra di Progresso */
+.progress-bar-container {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background: #1e88e5;
+    transition: width 0.5s ease;
+}
+
+body.dark .progress-bar {
+    background: #34495e;
+}
+
+body.dark .progress-bar::after {
+    background: #2196f3;
+}
+
+#progressText {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+body.dark #progressText {
+    color: #ecf0f1;
+}
+
+/* Tutorial Iniziale */
+#tutorialModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#tutorialModal .modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
+}
+
+body.dark #tutorialModal .modal-content {
+    background: #2a3e5a;
+    color: #ecf0f1;
+}
+
+#tutorialModal h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #1e88e5;
+}
+
+body.dark #tutorialModal h2 {
+    color: #2196f3;
+}
+
+#tutorialModal p {
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+#tutorialModal button {
+    margin: 10px 5px;
+    padding: 10px 20px;
 }
