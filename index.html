@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReMida AI - I tuoi soldi in chiaro</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ReMida AI</h1>
+            <p>I tuoi soldi in chiaro</p>
+        </header>
+        <div class="chat-section">
+            <div id="chatbox" class="chatbox"></div>
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Parla con ReMida..." onkeypress="if(event.key === 'Enter') sendMessage()" />
+                <button onclick="sendMessage()">➤</button>
+            </div>
+            <div id="quickReplies" class="quick-replies"></div>
+        </div>
+        <div class="charts-section">
+            <div class="chart-item"><canvas id="safetyChart"></canvas></div>
+            <div class="chart-item"><canvas id="inflationChart"></canvas></div>
+            <div class="chart-item"><canvas id="liquidityChart"></canvas></div>
+            <div class="chart-item"><canvas id="assetChart"></canvas></div>
+            <div class="chart-item"><canvas id="etfGrowthChart"></canvas></div>
+            <div class="chart-item"><canvas id="pacGrowthChart"></canvas></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
