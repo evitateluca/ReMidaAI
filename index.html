@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReMida AI - I tuoi soldi in chiaro</title>
+    <title>ReMida AI - Il tuo Consulente Finanziario</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -11,23 +11,45 @@
     <div class="container">
         <header>
             <h1>ReMida AI</h1>
-            <p>I tuoi soldi in chiaro</p>
+            <p>Il tuo alleato per trasformare il patrimonio in oro</p>
+            <label class="theme-switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="slider"></span>
+            </label>
         </header>
         <div class="chat-section">
             <div id="chatbox" class="chatbox"></div>
+            <div id="quickReplies" class="quick-replies"></div>
             <div class="input-container">
                 <input type="text" id="userInput" placeholder="Parla con ReMida..." onkeypress="if(event.key === 'Enter') sendMessage()" />
                 <button onclick="sendMessage()">➤</button>
             </div>
-            <div id="quickReplies" class="quick-replies"></div>
         </div>
         <div class="charts-section">
-            <div class="chart-item"><canvas id="safetyChart"></canvas></div>
-            <div class="chart-item"><canvas id="inflationChart"></canvas></div>
-            <div class="chart-item"><canvas id="liquidityChart"></canvas></div>
-            <div class="chart-item"><canvas id="assetChart"></canvas></div>
-            <div class="chart-item"><canvas id="etfGrowthChart"></canvas></div>
-            <div class="chart-item"><canvas id="pacGrowthChart"></canvas></div>
+            <div class="chart-row">
+                <div class="chart-item"><canvas id="safetyChart"></canvas></div>
+                <div class="chart-text"><p id="safetyText"></p></div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-text"><p id="inflationText"></p></div>
+                <div class="chart-item"><canvas id="inflationChart"></canvas></div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-item"><canvas id="liquidityChart"></canvas></div>
+                <div class="chart-text"><p id="liquidityText"></p></div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-text"><p id="assetText"></p></div>
+                <div class="chart-item"><canvas id="assetChart"></canvas></div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-item"><canvas id="etfGrowthChart"></canvas></div>
+                <div class="chart-text"><p id="etfGrowthText"></p></div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-text"><p id="pacGrowthText"></p></div>
+                <div class="chart-item"><canvas id="pacGrowthChart"></canvas></div>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

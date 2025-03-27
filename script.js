@@ -10,18 +10,54 @@ let userData = {
 };
 let step = 0;
 let chartsDrawn = false;
+let messageHistory = [];
 
-function addMessage(message, sender) {
+function addMessage(message, sender, stepIndex = null) {
     const chatbox = document.getElementById('chatbox');
     const p = document.createElement('p');
-    p.innerHTML = message; // Use innerHTML to render HTML content
+    p.innerHTML = message;
     p.className = sender;
+    if (sender === 'user') {
+        const editBtn = document.createElement('button');
+        editBtn.textContent = '✎';
+        editBtn.className = 'edit-btn';
+        editBtn.onclick = () => editMessage(p, stepIndex);
+        p.appendChild(editBtn);
+    }
     chatbox.appendChild(p);
     chatbox.scrollTop = chatbox.scrollHeight;
+    if (stepIndex !== null) messageHistory[stepIndex] = { message, sender, step: stepIndex };
+}
+
+function editMessage(messageElement, stepIndex) {
+    const input = document.getElementById('userInput');
+    input.value = messageElement.textContent.replace('✎', '').trim();
+    messageElement.remove();
+    messageHistory = messageHistory.slice(0, stepIndex);
+    step = stepIndex;
+    clearFutureMessages(stepIndex);
+    input.focus();
+}
+
+function clearFutureMessages(stepIndex) {
+    const chatbox = document.getElementById('chatbox');
+    const messages = Array.from(chatbox.children);
+    const index = messages.findIndex(p => p.textContent === messageHistory[stepIndex].message && p.className === 'user');
+    if (index !== -1) {
+        for (let i = messages.length - 1; i > index; i--) {
+            chatbox.removeChild(messages[i]);
+        }
+    }
+    chartsDrawn = false;
+    clearQuickReplies();
 }
 
 function addTypingIndicator() {
-    addMessage("ReMida sta scrivendo...", 'typing');
+    const chatbox = document.getElementById('chatbox');
+    const existingTyping = chatbox.querySelector('.typing');
+    if (!existingTyping) {
+        addMessage("ReMida sta scrivendo...", 'typing');
+    }
 }
 
 function removeTypingIndicator() {
@@ -51,33 +87,62 @@ function clearQuickReplies() {
 function drawCharts(safetyIndex, inflazione, illiquidita, total) {
     if (chartsDrawn) return;
 
+    // Indice di Sicurezza
     new Chart(document.getElementById('safetyChart').getContext('2d'), {
         type: 'doughnut',
         data: { labels: ['Sicurezza', 'Rischio'], datasets: [{ data: [safetyIndex, 100 - safetyIndex], backgroundColor: ['#2ecc71', '#e74c3c'] }] },
-        options: { plugins: { legend: { display: false }, title: { display: true, text: `Sicurezza: ${safetyIndex}%` } } }
+        options: { animation: { animateScale: true, animateRotate: true }, plugins: { legend: { display: false }, title: { display: true, text: `Sicurezza: ${safetyIndex}%` } } }
     });
+    document.getElementById('safetyText').innerHTML = `
+        Questo grafico ti mostra quanto è sicuro il tuo patrimonio oggi. Il tuo indice di sicurezza è <strong>${safetyIndex}%</strong>. 
+        Il verde rappresenta la parte dei tuoi soldi che è ben protetta da rischi come l’inflazione o perdite improvvise. 
+        Il rosso, invece, è il <strong>${100 - safetyIndex}%</strong> che potrebbe essere a rischio, ad esempio perché troppo fermo o poco diversificato. 
+        Più il verde cresce, più sei tranquillo per il futuro!
+    `;
 
+    // Inflazione
     new Chart(document.getElementById('inflationChart').getContext('2d'), {
         type: 'bar',
         data: { labels: ['Perdita Annuale'], datasets: [{ label: 'Inflazione', data: [inflazione], backgroundColor: '#ff9800' }] },
-        options: { scales: { y: { beginAtZero: true } }, plugins: { title: { display: true, text: 'Perdita per Inflazione (€)' } } }
+        options: { animation: { duration: 1000, easing: 'easeOutBounce' }, scales: { y: { beginAtZero: true } }, plugins: { title: { display: true, text: 'Perdita per Inflazione (€)' } } }
     });
+    document.getElementById('inflationText').innerHTML = `
+        Qui vedi quanto valore perdi ogni anno tenendo <strong>${userData.contoCorrente.toLocaleString('it-IT')}€</strong> sul conto corrente. 
+        Con l’inflazione, che è l’aumento dei prezzi nel tempo, perdi <strong>${inflazione.toFixed(0)}€</strong> all’anno. 
+        È come se il tuo denaro "si sciogliesse" un po’ alla volta: lasciando i soldi fermi, compri meno cose domani rispetto a oggi. 
+        Muoverli in un investimento può fermare questa perdita!
+    `;
 
+    // Illiquidità
     new Chart(document.getElementById('liquidityChart').getContext('2d'), {
         type: 'pie',
         data: { labels: ['Liquido', 'Illiquido'], datasets: [{ data: [100 - illiquidita, illiquidita], backgroundColor: ['#4caf50', '#f44336'] }] },
-        options: { plugins: { title: { display: true, text: `Illiquidità: ${illiquidita.toFixed(0)}%` } } }
+        options: { animation: { animateScale: true, animateRotate: true }, plugins: { title: { display: true, text: `Illiquidità: ${illiquidita.toFixed(0)}%` } } }
     });
+    document.getElementById('liquidityText').innerHTML = `
+        Questo grafico divide i tuoi soldi in due parti. Il rosso (<strong>${illiquidita.toFixed(0)}%</strong>) mostra quanto del tuo patrimonio, 
+        come i <strong>${userData.immobili.toLocaleString('it-IT')}€</strong> in immobili, è "bloccato" e non puoi usarlo subito. 
+        Il verde (<strong>${(100 - illiquidita).toFixed(0)}%</strong>) è invece quello liquido, come i <strong>${userData.contoCorrente.toLocaleString('it-IT')}€</strong> 
+        sul conto, che puoi spendere o investire quando vuoi. Troppo rosso significa meno flessibilità!
+    `;
 
+    // Distribuzione Patrimonio
     new Chart(document.getElementById('assetChart').getContext('2d'), {
         type: 'pie',
         data: { 
             labels: ['Conto Corrente', 'Immobili', 'Obbligazioni'], 
             datasets: [{ data: [userData.contoCorrente, userData.immobili, userData.obbligazioni || 0], backgroundColor: ['#2196f3', '#9c27b0', '#ffeb3b'] }] 
         },
-        options: { plugins: { title: { display: true, text: 'Distribuzione Patrimonio' } } }
+        options: { animation: { animateScale: true, animateRotate: true }, plugins: { title: { display: true, text: 'Distribuzione Patrimonio' } } }
     });
+    document.getElementById('assetText').innerHTML = `
+        Questo è il "mappamondo" dei tuoi soldi! Hai <strong>${userData.contoCorrente.toLocaleString('it-IT')}€</strong> sul conto corrente (blu), 
+        <strong>${userData.immobili.toLocaleString('it-IT')}€</strong> in immobili (viola) e <strong>${(userData.obbligazioni || 0).toLocaleString('it-IT')}€</strong> 
+        in obbligazioni (giallo). Ti mostra come è distribuito il tuo patrimonio totale di <strong>${total.toLocaleString('it-IT')}€</strong>. 
+        Se un colore è troppo grande, potresti voler bilanciare meglio i tuoi investimenti!
+    `;
 
+    // Crescita ETF
     const etfAmount = userData.contoCorrente * 0.2;
     const etfGrowth = [etfAmount, etfAmount * 1.02, etfAmount * 1.02 ** 2, etfAmount * 1.02 ** 3];
     new Chart(document.getElementById('etfGrowthChart').getContext('2d'), {
@@ -86,9 +151,16 @@ function drawCharts(safetyIndex, inflazione, illiquidita, total) {
             labels: ['Oggi', '1 anno', '2 anni', '3 anni'], 
             datasets: [{ label: 'ETF', data: etfGrowth, borderColor: '#2196f3', fill: false }] 
         },
-        options: { plugins: { title: { display: true, text: 'Crescita ETF (2% annuo)' } } }
+        options: { animation: { duration: 1500, easing: 'easeInOutQuad' }, plugins: { title: { display: true, text: 'Crescita ETF (2% annuo)' } } }
     });
+    document.getElementById('etfGrowthText').innerHTML = `
+        Immagina di prendere <strong>${etfAmount.toFixed(0)}€</strong> dal tuo conto e metterli in un ETF, un tipo di investimento sicuro che cresce del 2% all’anno. 
+        Questo grafico ti mostra come quei soldi possono aumentare: dopo 1 anno diventano <strong>${etfGrowth[1].toFixed(0)}€</strong>, 
+        dopo 2 anni <strong>${etfGrowth[2].toFixed(0)}€</strong> e dopo 3 anni <strong>${etfGrowth[3].toFixed(0)}€</strong>. 
+        È un modo semplice per battere l’inflazione e far crescere il tuo patrimonio nel tempo!
+    `;
 
+    // Crescita PAC
     const pacMonthly = userData.risparmioMensile * 0.6;
     const pacGrowth = [0, pacMonthly * 12 * 1.05, pacMonthly * 24 * 1.05 ** 2, pacMonthly * 36 * 1.05 ** 3];
     new Chart(document.getElementById('pacGrowthChart').getContext('2d'), {
@@ -97,8 +169,14 @@ function drawCharts(safetyIndex, inflazione, illiquidita, total) {
             labels: ['Oggi', '1 anno', '2 anni', '3 anni'], 
             datasets: [{ label: 'PAC', data: pacGrowth, borderColor: '#4caf50', fill: false }] 
         },
-        options: { plugins: { title: { display: true, text: 'Crescita PAC (5% annuo)' } } }
+        options: { animation: { duration: 1500, easing: 'easeInOutQuad' }, plugins: { title: { display: true, text: 'Crescita PAC (5% annuo)' } } }
     });
+    document.getElementById('pacGrowthText').innerHTML = `
+        Se metti da parte <strong>${pacMonthly.toFixed(0)}€ al mese</strong> (il 60% del tuo risparmio mensile di <strong>${userData.risparmioMensile.toLocaleString('it-IT')}€</strong>) 
+        in un PAC che cresce del 5% all’anno, questo grafico ti mostra il risultato. Dopo 1 anno hai <strong>${pacGrowth[1].toFixed(0)}€</strong>, 
+        dopo 2 anni <strong>${pacGrowth[2].toFixed(0)}€</strong> e dopo 3 anni <strong>${pacGrowth[3].toFixed(0)}€</strong>. 
+        È un piano di accumulo: risparmi un po’ ogni mese e lo fai crescere per il tuo futuro!
+    `;
 
     chartsDrawn = true;
 }
@@ -129,13 +207,13 @@ Ecco come stanno i tuoi soldi: hai <strong>${total.toLocaleString('it-IT')}€</
 - Con il tuo orizzonte di <strong>${userData.orizzonteTemporale} anni</strong>, punta su strumenti sicuri ma con un po’ di crescita, come fondi misti.
 
 Ti va di approfondire? Dimmi "Sì"!
-`;
+    `;
     setTimeout(() => {
         removeTypingIndicator();
         addMessage(reply, 'bot');
         addQuickReplies(['Sì', 'No']);
         drawCharts(safetyIndex, inflazione, illiquidita, total);
-    }, 1500); // Ritardo di 1,5 secondi
+    }, 1500);
 }
 
 function sendMessage() {
@@ -143,7 +221,7 @@ function sendMessage() {
     const message = input.value.trim();
     if (!message) return;
 
-    addMessage(message, 'user');
+    addMessage(message, 'user', step);
     input.value = '';
     clearQuickReplies();
 
@@ -157,135 +235,108 @@ function sendMessage() {
                     step = 1;
                 } else {
                     addMessage("Nessun problema, quando vuoi dire 'Sì' sono qui!", 'bot');
-                    addQuickReplies(['Sì']);
+                    addQuickReplies(['Sì', 'No']);
                 }
             }, 1000);
             break;
 
         case 1: // Conto corrente
             userData.contoCorrente = parseFloat(message);
-            if (isNaN(userData.contoCorrente) || userData.contoCorrente < 0) {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+            addTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                if (isNaN(userData.contoCorrente) || userData.contoCorrente < 0) {
                     addMessage("Mi serve un numero valido, puoi riprovare?", 'bot');
-                }, 1000);
-            } else {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+                } else {
                     addMessage("Ok, perfetto! E quanto valgono i tuoi immobili, se ne hai?", 'bot');
                     step = 2;
-                }, 1000);
-            }
+                }
+            }, 1000);
             break;
 
         case 2: // Immobili
             userData.immobili = parseFloat(message);
-            if (isNaN(userData.immobili) || userData.immobili < 0) {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+            addTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                if (isNaN(userData.immobili) || userData.immobili < 0) {
                     addMessage("Inserisci un numero valido, per favore!", 'bot');
-                }, 1000);
-            } else {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+                } else {
                     addMessage("Hai obbligazioni o altri investimenti? Quanto valgono? (Scrivi 0 se non ne hai)", 'bot');
                     step = 3;
-                }, 1000);
-            }
+                }
+            }, 1000);
             break;
 
         case 3: // Obbligazioni
             userData.obbligazioni = parseFloat(message);
-            if (isNaN(userData.obbligazioni) || userData.obbligazioni < 0) {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+            addTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                if (isNaN(userData.obbligazioni) || userData.obbligazioni < 0) {
                     addMessage("Ci vuole un numero valido, riprova!", 'bot');
-                }, 1000);
-            } else {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+                } else {
                     addMessage("Quanto riesci a mettere da parte ogni mese? Il tuo risparmio mensile?", 'bot');
                     step = 4;
-                }, 1000);
-            }
+                }
+            }, 1000);
             break;
 
         case 4: // Risparmio mensile
             userData.risparmioMensile = parseFloat(message);
-            if (isNaN(userData.risparmioMensile) || userData.risparmioMensile < 0) {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+            addTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                if (isNaN(userData.risparmioMensile) || userData.risparmioMensile < 0) {
                     addMessage("Dammi un numero valido, dai!", 'bot');
-                }, 1000);
-            } else {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+                } else {
                     addMessage("Quanti anni hai? Mi aiuta a capire meglio la tua situazione.", 'bot');
                     step = 5;
-                }, 1000);
-            }
+                }
+            }, 1000);
             break;
 
         case 5: // Età
             userData.eta = parseInt(message);
-            if (isNaN(userData.eta) || userData.eta < 18 || userData.eta > 120) {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+            addTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                if (isNaN(userData.eta) || userData.eta < 18 || userData.eta > 120) {
                     addMessage("Inserisci un’età realistica, per favore!", 'bot');
-                }, 1000);
-            } else {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+                } else {
                     addMessage("Qual è il tuo reddito annuo netto? (Es. 30000)", 'bot');
                     step = 6;
-                }, 1000);
-            }
+                }
+            }, 1000);
             break;
 
         case 6: // Reddito annuo
             userData.redditoAnnuo = parseFloat(message);
-            if (isNaN(userData.redditoAnnuo) || userData.redditoAnnuo < 0) {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+            addTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                if (isNaN(userData.redditoAnnuo) || userData.redditoAnnuo < 0) {
                     addMessage("Serve un numero valido per il reddito, riprova!", 'bot');
-                }, 1000);
-            } else {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+                } else {
                     addMessage("Per quanti anni vuoi pianificare il tuo futuro finanziario? (Es. 10, 20)", 'bot');
                     step = 7;
-                }, 1000);
-            }
+                }
+            }, 1000);
             break;
 
         case 7: // Orizzonte temporale
             userData.orizzonteTemporale = parseInt(message);
-            if (isNaN(userData.orizzonteTemporale) || userData.orizzonteTemporale < 1) {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+            addTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                if (isNaN(userData.orizzonteTemporale) || userData.orizzonteTemporale < 1) {
                     addMessage("Inserisci un numero di anni valido, ok?", 'bot');
-                }, 1000);
-            } else {
-                addTypingIndicator();
-                setTimeout(() => {
-                    removeTypingIndicator();
+                } else {
                     addMessage("Ultimo passo: qual è il tuo obiettivo principale? (Es. pensione, casa, viaggi)", 'bot');
+                    addQuickReplies(['Pensione', 'Casa', 'Viaggi', 'Altro']);
                     step = 8;
-                }, 1000);
-            }
+                }
+            }, 1000);
             break;
 
         case 8: // Obiettivo
@@ -316,7 +367,7 @@ Vuoi rifare tutto con dati diversi? Dimmi "Sì"!
                     addQuickReplies(['Sì', 'No']);
                 } else {
                     addMessage("Grazie per avermi usato! Se vuoi ripartire, dimmi 'Sì'.", 'bot');
-                    addQuickReplies(['Sì']);
+                    addQuickReplies(['Sì', 'No']);
                     step = 0;
                     chartsDrawn = false;
                 }
@@ -325,5 +376,13 @@ Vuoi rifare tutto con dati diversi? Dimmi "Sì"!
     }
 }
 
-addMessage("Ciao! Sono ReMida AI, il tuo consulente finanziario personale. Vuoi dare un’occhiata al tuo patrimonio? Dimmi 'Sì' quando sei pronto!", 'bot');
-addQuickReplies(['Sì']);
+// Tema Dark Switch
+document.getElementById('themeToggle').addEventListener('change', function() {
+    document.body.classList.toggle('dark');
+});
+
+// Inizializzazione
+window.onload = function() {
+    addMessage("Ciao! Sono ReMida AI, il tuo consulente finanziario personale. Vuoi dare un’occhiata al tuo patrimonio? Dimmi 'Sì' quando sei pronto!", 'bot');
+    addQuickReplies(['Sì', 'No']);
+};

@@ -6,6 +6,12 @@ body {
     display: flex;
     justify-content: center;
     min-height: 100vh;
+    transition: background 0.3s ease;
+}
+
+body.dark {
+    background: linear-gradient(120deg, #2c3e50, #34495e);
+    color: #ecf0f1;
 }
 
 .container {
@@ -15,6 +21,12 @@ body {
     border-radius: 20px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
     overflow: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark .container {
+    background: #1e2a38;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
 }
 
 header {
@@ -23,6 +35,13 @@ header {
     padding: 25px;
     text-align: center;
     border-bottom: 5px solid #1565c0;
+    position: relative;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark header {
+    background: #2a3e5a;
+    border-bottom: 5px solid #1e2a38;
 }
 
 header h1 {
@@ -35,6 +54,69 @@ header p {
     margin: 5px 0 0;
     font-size: 18px;
     opacity: 0.85;
+}
+
+.theme-switch {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.theme-switch .slider {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    background: #ccc;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.theme-switch .slider:before {
+    position: absolute;
+    content: "☀️"; /* Icona del sole */
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    top: 3px;
+    background: none; /* Rimuoviamo il cerchio bianco */
+    border-radius: 50%;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+}
+
+.theme-switch .slider:after {
+    position: absolute;
+    content: "🌙"; /* Icona della luna */
+    height: 18px;
+    width: 18px;
+    right: 3px;
+    top: 3px;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.theme-switch input:checked + .slider {
+    background: #2196f3;
+}
+
+.theme-switch input:checked + .slider:before {
+    transform: translateX(26px);
+    opacity: 0; /* Nasconde il sole quando è in dark mode */
+}
+
+.theme-switch input:checked + .slider:after {
+    opacity: 1; /* Mostra la luna quando è in dark mode */
 }
 
 .chat-section {
@@ -50,6 +132,14 @@ header p {
     background: #f9fbfc;
     margin-bottom: 20px;
     box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+    min-height: 100px;
+    display: block;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark .chatbox {
+    background: #2a3e5a;
+    border-color: #34495e;
 }
 
 .chatbox p {
@@ -60,11 +150,9 @@ header p {
     line-height: 1.5;
     opacity: 0;
     animation: fadeIn 0.5s ease forwards;
-}
-
-#chatbox p {
-    white-space: pre-wrap; /* Preserve newlines and spacing */
-    word-wrap: break-word; /* Prevent long words from overflowing */
+    position: relative;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .chatbox .bot {
@@ -73,24 +161,78 @@ header p {
     align-self: flex-start;
 }
 
+body.dark .chatbox .bot {
+    background: #2196f3;
+}
+
 .chatbox .user {
     background: #e0e0e0;
     color: #333;
     margin-left: auto;
     text-align: right;
+    position: relative;
+}
+
+body.dark .chatbox .user {
+    background: #34495e;
+    color: #ecf0f1;
+}
+
+.chatbox .user:hover .edit-btn {
+    opacity: 1;
+}
+
+.chatbox .user .edit-btn {
+    position: absolute;
+    top: 50%;
+    left: -25px;
+    transform: translateY(-50%);
+    background: none;
+    color: #ff9800;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
 .chatbox .typing {
     background: #e0e0e0;
     color: #666;
-    padding: 10px;
+    padding: 10px 18px;
     border-radius: 15px;
     display: inline-block;
+    animation: pulse 1.5s infinite;
 }
 
-.chatbox .typing::after {
-    content: '• • •';
-    animation: blink 1s infinite;
+body.dark .chatbox .typing {
+    background: #34495e;
+    color: #bdc3c7;
+}
+
+.quick-replies {
+    margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.quick-replies button {
+    padding: 8px 15px;
+    background: #42a5f5;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+body.dark .quick-replies button {
+    background: #2980b9;
+}
+
+.quick-replies button:hover {
+    background: #1976d2;
 }
 
 .input-container {
@@ -100,11 +242,12 @@ header p {
     padding: 10px;
     border-radius: 25px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    transition: background 0.3s ease;
 }
 
-.input-container:hover {
-    transform: translateY(-2px);
+body.dark .input-container {
+    background: #2a3e5a;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 input {
@@ -115,6 +258,11 @@ input {
     font-size: 16px;
     outline: none;
     background: transparent;
+    color: #333;
+}
+
+body.dark input {
+    color: #ecf0f1;
 }
 
 button {
@@ -128,44 +276,56 @@ button {
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
+body.dark button {
+    background: #2196f3;
+}
+
 button:hover {
     background: #1565c0;
     transform: scale(1.05);
 }
 
-.quick-replies {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.quick-replies button {
-    padding: 8px 15px;
-    background: #42a5f5;
-    color: #fff;
-    border-radius: 20px;
-    font-size: 14px;
-}
-
-.quick-replies button:hover {
-    background: #1976d2;
-}
-
 .charts-section {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
     padding: 25px;
 }
 
+.chart-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px; /* Aumentato spazio */
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0; /* Aggiunto bordo */
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+body.dark .chart-row {
+    border-bottom: 1px solid #34495e;
+}
+
 .chart-item {
-    flex: 1 1 200px;
+    flex: 1;
     max-width: 250px;
     opacity: 0;
     animation: slideIn 0.5s ease forwards;
     animation-delay: 0.2s;
+}
+
+.chart-text {
+    flex: 1;
+    max-width: 400px;
+    padding: 10px;
+}
+
+.chart-text p {
+    margin: 0;
+    line-height: 1.6;
+    color: #333;
+}
+
+body.dark .chart-text p {
+    color: #ecf0f1;
 }
 
 @keyframes fadeIn {
@@ -178,16 +338,21 @@ button:hover {
     to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes blink {
-    50% { opacity: 0.5; }
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 @media (max-width: 768px) {
     .chatbox {
         height: 350px;
     }
-    .charts-section {
+    .chart-row {
         flex-direction: column;
         align-items: center;
+    }
+    .chart-item, .chart-text {
+        max-width: 100%;
     }
 }
