@@ -232,6 +232,8 @@ body.dark .chatbox {
     background: #1e88e5;
     color: #fff;
     align-self: flex-start;
+    width: fit-content;
+    padding-right: 10%;
 }
 
 body.dark .chatbox .bot {
@@ -244,6 +246,8 @@ body.dark .chatbox .bot {
     margin-left: auto;
     text-align: right;
     position: relative;
+    width: fit-content;
+    padding-left: 10%;
 }
 
 body.dark .chatbox .user {
@@ -276,6 +280,18 @@ body.dark .chatbox .user {
     border-radius: 15px;
     display: inline-block;
     animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
 }
 
 body.dark .chatbox .typing {
@@ -519,11 +535,7 @@ body.dark #calculatorModal input {
     to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
+
 
 @media (max-width: 768px) {
     .chatbox {

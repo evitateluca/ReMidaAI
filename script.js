@@ -81,6 +81,7 @@ function addTypingIndicator() {
     const existingTyping = chatbox.querySelector('.typing');
     if (!existingTyping) {
         addMessage("ReMida sta scrivendo...", 'typing');
+        console.log("Typing indicator added.");
     }
 }
 
@@ -88,6 +89,7 @@ function removeTypingIndicator() {
     const chatbox = document.getElementById('chatbox');
     const typing = chatbox.querySelector('.typing');
     if (typing) typing.remove();
+    console.log("Typing indicator removed.");
 }
 
 function addQuickReplies(options) {
